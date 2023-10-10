@@ -21,3 +21,25 @@ for i in range(0, len(contests)-3):
     results=results.union(iteration_set)   
 # Print the results
 results
+
+## Final Solution - Method 1 
+
+import pandas as pd
+
+def find_interview_candidates(contests: pd.DataFrame, users: pd.DataFrame) -> pd.DataFrame:
+
+    set_consectuive_all_gold=set(contests[contests.groupby('gold_medal')['gold_medal'].transform('count')>=3]['gold_medal'])
+    set_consectuive_any=set()
+    subset_size=3
+
+    # Iterate through the DataFrame and process each subset
+    for i in range(0, len(contests)-2):
+        subset = contests.iloc[i:i+subset_size,1:]
+        iteration_set=(set([value for value in set(subset.dropna().values.flatten()) if subset.dropna().values.flatten().tolist().count(value)>=3]))
+        set_consectuive_any=set_consectuive_any.union(iteration_set)   
+    
+    final_set=set_consectuive_all_gold.union(set_consectuive_any)
+
+    return users[users['user_id'].isin(final_set)][['name','mail']]
+
+
