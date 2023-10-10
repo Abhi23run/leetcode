@@ -9,3 +9,15 @@ set(contests[contests['gold_medal'].map(contests['gold_medal'].value_counts()>=3
 
 ### Method 2 : Using groupBy object and Transform - The transform method in Pandas is used to perform group-wise transformations on a DataFrame or Series. When applied to a GroupBy object, it returns an object that is indexed the same way as the original DataFrame or Series, but with the values computed within each group. This is often used when you want to broadcast the results of an aggregation back to the original data, ensuring that the transformed data aligns correctly with the original data.
 set(contests[contests.groupby('gold_medal')['gold_medal'].transform('count')>=3]['gold_medal'])
+
+## Finding users with any medal in 3 or more consecutive contests
+results = set()
+subset_size=3
+
+# Iterate through the DataFrame and process each subset
+for i in range(0, len(contests)-3):
+    subset = contests.iloc[i:i+subset_size,1:]
+    iteration_set=(set([value for value in set(subset.dropna().values.flatten()) if subset.dropna().values.flatten().tolist().count(value)>=3]))
+    results=results.union(iteration_set)   
+# Print the results
+results
