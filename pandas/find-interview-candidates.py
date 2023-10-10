@@ -42,4 +42,25 @@ def find_interview_candidates(contests: pd.DataFrame, users: pd.DataFrame) -> pd
 
     return users[users['user_id'].isin(final_set)][['name','mail']]
 
+## Final Solution - Method 2 
+
+import pandas as pd
+
+def find_interview_candidates(contests: pd.DataFrame, users: pd.DataFrame) -> pd.DataFrame:
+    def create_unified(col):
+        return contests[['contest_id', col]].rename(columns={col: 'medalist'})
+    
+    df = pd.concat((
+        create_unified('gold_medal'),
+        create_unified('silver_medal'),
+        create_unified('bronze_medal'))
+    ).sort_values('contest_id')
+    
+    consecutive = df.groupby('medalist')['contest_id'].apply(lambda g: ((g.diff() == 1) & (g.diff().diff() == 0)).any())
+    consecutive = consecutive[consecutive].index
+    golds = contests.gold_medal.value_counts()
+    golds = golds[golds>= 3].index
+    
+    return users[users.user_id.isin(np.union1d(golds, consecutive))][['name', 'mail']]
+    
 
