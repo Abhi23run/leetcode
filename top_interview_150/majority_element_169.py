@@ -25,3 +25,22 @@ class Solution:
 
 ### Interesting Approach: Sorting 
 ## The intuition behind this approach is that if an element occurs more than n/2 times in the array (where n is the size of the array), it will always occupy the middle position when the array is sorted. Therefore, we can sort the array and return the element at index n/2.
+
+## Final Approach : Moore's Voting Algorithm
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+
+        ##Moore's Voting Algorithm
+        count = 0
+        candidate = 0
+        
+        for num in nums:
+            if count == 0:
+                candidate = num
+            
+            if num == candidate:
+                count += 1
+            else:
+                count -= 1
+        
+        return candidate
